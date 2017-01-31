@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+  purge)
+    deluser carbon-c-relay || true
+    delgroup carbon-c-relay || true
+  ;;
+
+  abort-install|abort-upgrade|remove|upgrade|failed-upgrade|disappear)
+  ;;
+
+  *)
+    echo "$0 called with unknown argument \`$1'" >&2
+    exit 1
+  ;;
+esac

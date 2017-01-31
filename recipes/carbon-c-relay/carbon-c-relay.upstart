@@ -1,0 +1,14 @@
+description "carbon relay C implementation"
+
+start on (local-filesystems and net-device-up IFACE!=lo)
+stop on [!12345]
+
+limit nofile 32768 32768
+
+setuid carbon-c-relay
+setgid carbon-c-relay
+
+script
+  . /etc/default/carbon-c-relay
+  /usr/bin/carbon-c-relay $DAEMON_ARGS
+end script

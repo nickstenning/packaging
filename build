@@ -1,0 +1,41 @@
+#!/bin/sh
+
+set -eu
+
+if [ "$#" -ne "1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo >&2 "Usage: $(basename "$0") [-h/--help] <pkgname>"
+    echo >&2
+    echo >&2 "Please specify a package name. For example, if you want to build"
+    echo >&2 "the collectd package from \`recipes/collectd/', you would run:"
+    echo >&2
+    echo >&2 "  ./build collectd"
+    echo >&2
+    echo >&2 "The resulting package will be placed in the \`pkg/' directory."
+    exit 1
+fi
+
+PKGNAME=$1
+
+if [ ! -d "recipes/$PKGNAME" ]; then
+    echo >&2 "Error: recipes/$PKGNAME does not exist!"
+    exit 1
+fi
+
+if [ ! -f "recipes/$PKGNAME/recipe.rb" ]; then
+    echo >&2 "Error: recipes/$PKGNAME/recipe.rb does not exist!"
+    exit 1
+fi
+
+docker build -t packaging .
+docker run \
+    -it \
+    --rm \
+    -v "$PWD"/recipes:/src/recipes:ro \
+    -v "$PWD"/pkg:/tmp/pkg \
+    packaging \
+    sh -c "cd 'recipes/$PKGNAME' &&
+        bundle exec fpm-cook \
+        --cache-dir /tmp/cache \
+        --tmp-root /tmp/buildroot \
+        --pkg-dir /tmp/pkg"
+echo "Packages have been placed in \`pkg/'"

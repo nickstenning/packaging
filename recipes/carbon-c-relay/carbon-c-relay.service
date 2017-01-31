@@ -1,0 +1,11 @@
+[Unit]
+Description=graphite carbon relay C implementation
+
+[Service]
+EnvironmentFile=/etc/default/carbon-c-relay
+User=carbon-c-relay
+Group=carbon-c-relay
+ExecStart=/usr/bin/carbon-c-relay $DAEMON_ARGS
+
+[Install]
+WantedBy=multi-user.target
