@@ -1,5 +1,5 @@
-packager
-========
+packaging
+=========
 
 Tools for building custom OS packages.
 
